@@ -22,6 +22,26 @@ echo "4) Uninstall everything"
 echo ""
 read -p "Enter option [1-4]: " OPTION
 
+install_grub_fix() {
+    echo ""
+    echo "Installing GRUB configuration..."
+
+    # Copy EDID firmware
+    mkdir -p /lib/firmware/edid
+    cp p8_panel.bin /lib/firmware/edid/
+    update-initramfs -u
+
+    # Update GRUB
+    GRUB_FILE=/etc/default/grub
+    if grep -q "drm.edid_firmware" "$GRUB_FILE"; then
+        echo "GRUB already configured, skipping."
+    else
+        sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 video=DSI-1:panel_orientation=right_side_up drm.edid_firmware=DSI-1:edid\/p8_panel.bin"/' "$GRUB_FILE"
+        update-grub
+    fi
+    echo "GRUB configuration installed."
+}
+
 install_boot_fix() {
     echo ""
     echo "Installing boot fix..."
@@ -62,6 +82,7 @@ uninstall() {
     rm -f /etc/udev/rules.d/99-hdmi-dsi.rules
     rm -f /usr/local/bin/hdmi-dsi-fix.sh
     rm -f /etc/gdm3/monitors.xml
+    rm -f /lib/firmware/edid/p8_panel.bin
     systemctl daemon-reload
     udevadm control --reload-rules
     echo "Uninstall complete. Please reboot."
@@ -69,14 +90,17 @@ uninstall() {
 
 case $OPTION in
     1)
+	install_grub_fix    
         install_boot_fix
         install_gdm_fix
         ;;
     2)
+	install_grub_fix
         install_hdmi_fix
         install_gdm_fix
         ;;
     3)
+	install_grub_fix
         install_boot_fix
         install_hdmi_fix
         install_gdm_fix
