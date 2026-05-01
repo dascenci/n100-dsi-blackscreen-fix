@@ -1,5 +1,5 @@
 --- linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_dsi.c	2026-04-12 14:48:06.000000000 -0600
-+++ /usr/src/linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_dsi.c	2026-04-30 21:27:41.315630724 -0600
++++ linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_dsi.modified.c	2026-05-01 08:24:28.675465612 -0600
 @@ -21,6 +21,8 @@
  
  	if (panel_power_off_duration < (s64)intel_dsi->panel_pwr_cycle_delay)
