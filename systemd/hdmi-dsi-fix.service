@@ -1,0 +1,8 @@
+[Unit]
+Description=Fix DSI panel after HDMI change
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/hdmi-dsi-fix.sh
+ExecStartPost=/bin/sleep 30
+RemainAfterExit=yes

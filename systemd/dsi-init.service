@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize DSI panel on boot
+After=multi-user.target
+After=gdm.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/rtcwake -u -s 5 -m mem
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target
