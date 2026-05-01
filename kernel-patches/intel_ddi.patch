@@ -1,0 +1,18 @@
+--- linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_ddi.c	2026-04-12 14:48:06.000000000 -0600
++++ /usr/src/linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_ddi.c	2026-04-30 17:54:15.959716624 -0600
+@@ -63,6 +63,7 @@
+ #include "intel_dp_tunnel.h"
+ #include "intel_dpio_phy.h"
+ #include "intel_dsi.h"
++#include "intel_dmc.h"
+ #include "intel_encoder.h"
+ #include "intel_fdi.h"
+ #include "intel_fifo_underrun.h"
+@@ -5207,6 +5208,7 @@
+ 		if (!assert_has_icl_dsi(display))
+ 			return;
+ 
++		intel_dmc_wait_fw_load(display);
+ 		icl_dsi_init(display, devdata);
+ 		return;
+ 	}

@@ -1,0 +1,15 @@
+--- linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_modeset_setup.c	2026-04-12 14:48:06.000000000 -0600
++++ /usr/src/linux-source-7.0.0/drivers/gpu/drm/i915/display/intel_modeset_setup.c	2026-04-30 18:25:11.317765406 -0600
+@@ -650,6 +650,12 @@
+ 	/* notify opregion of the sanitized encoder state */
+ 	intel_opregion_notify_encoder(encoder, connector && has_active_crtc);
+ 
++
++	/* Force full modeset for DSI encoders to ensure proper panel init */
++	if (encoder->type == INTEL_OUTPUT_DSI && crtc_state && has_active_crtc)
++		crtc_state->uapi.mode_changed = true;
++
++
+ 	if (HAS_DDI(display))
+ 		intel_ddi_sanitize_encoder_pll_mapping(encoder);
+ }
