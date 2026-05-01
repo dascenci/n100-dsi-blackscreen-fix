@@ -18,9 +18,11 @@ echo ""
 echo "1) Install boot fix only (rtcwake on boot)"
 echo "2) Install HDMI fix only (rtcwake on HDMI connect/disconnect)"
 echo "3) Install both (recommended)"
-echo "4) Uninstall everything"
+echo "4) Build and install kernel patches"
+echo "5) Full install (kernel patches + both fixes) (recommended for new installs)"
+echo "6) Uninstall everything"
 echo ""
-read -p "Enter option [1-4]: " OPTION
+read -p "Enter option [1-6]: " OPTION
 
 install_grub_fix() {
     echo ""
@@ -110,7 +112,18 @@ case $OPTION in
         install_gdm_fix
         ;;
     4)
+        bash $(dirname "$0")/build.sh
+        ;;
+    5)
+        bash $(dirname "$0")/build.sh
+        install_grub_fix
+        install_boot_fix
+        install_hdmi_fix
+        install_gdm_fix
+        ;;
+    6)
         uninstall
+	exit 0
         ;;
     *)
         echo "Invalid option."
