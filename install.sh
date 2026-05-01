@@ -25,20 +25,24 @@ read -p "Enter option [1-4]: " OPTION
 install_grub_fix() {
     echo ""
     echo "Installing GRUB configuration..."
-
-    # Copy EDID firmware
+    
     mkdir -p /lib/firmware/edid
     cp p8_panel.bin /lib/firmware/edid/
     update-initramfs -u
-
-    # Update GRUB
+    
     GRUB_FILE=/etc/default/grub
+    
+    # Remove debug parameters if present
+    sed -i 's/ drm\.debug=0x1e//g' "$GRUB_FILE"
+    sed -i 's/ log_buf_len=32M//g' "$GRUB_FILE"
+    
     if grep -q "drm.edid_firmware" "$GRUB_FILE"; then
         echo "GRUB already configured, skipping."
     else
         sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 video=DSI-1:panel_orientation=right_side_up drm.edid_firmware=DSI-1:edid\/p8_panel.bin"/' "$GRUB_FILE"
-        update-grub
     fi
+    
+    update-grub
     echo "GRUB configuration installed."
 }
 
