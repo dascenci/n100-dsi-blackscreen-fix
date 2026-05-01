@@ -2,7 +2,7 @@
 
 STAMPFILE=/tmp/hdmi-dsi-last-run
 
-# Si se ejecutó hace menos de 15 segundos, ignorar
+# If executed less than 15 seconds ago, ignore
 if [ -f "$STAMPFILE" ]; then
     LAST=$(cat "$STAMPFILE")
     NOW=$(date +%s)
