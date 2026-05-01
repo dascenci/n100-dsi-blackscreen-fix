@@ -44,24 +44,40 @@ A combination of kernel patches and workarounds that together make the display w
 
 - Ubuntu 25.04 (kernel 7.0.0) or similar
 - `git`
+- `build-essential`, `libdw-dev` (only needed for kernel patches)
 
 ### Quick Install
 
 ```bash
 git clone https://github.com/dascenci/n100-dsi-blackscreen-fix.git
 cd n100-dsi-blackscreen-fix
-chmod +x install.sh
+chmod +x install.sh build.sh
 sudo ./install.sh
 ```
 
-The installer will ask what you want to install:
+### Installer Options
 
-1. Boot fix only
-2. HDMI fix only
-3. Both (recommended)
-4. Uninstall everything
+Install boot fix only       — rtcwake on boot
+Install HDMI fix only       — rtcwake on HDMI connect/disconnect
+Install both                — recommended for most users
+Build kernel patches        — compile and install patched i915 module
+Full install                — kernel patches + both fixes (recommended for new installs)
+Uninstall everything
+
+
+**Recommended for first time users: option 5**
 
 A reboot is required after installation.
+
+### Manual Kernel Build
+
+If you prefer to build the kernel module manually:
+
+```bash
+sudo ./build.sh
+```
+
+This will install dependencies, apply patches, compile the i915 module and install it automatically.
 
 ## Known Limitations
 
