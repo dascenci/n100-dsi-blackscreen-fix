@@ -13,13 +13,14 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-echo "What would you like to install?"
+echo "What would you like to do?"
 echo ""
-echo "1) Boot fix only (rtcwake on boot)"
-echo "2) HDMI fix only (rtcwake on HDMI connect/disconnect)"
+echo "1) Install boot fix only (rtcwake on boot)"
+echo "2) Install HDMI fix only (rtcwake on HDMI connect/disconnect)"
 echo "3) Install both (recommended)"
+echo "4) Uninstall everything"
 echo ""
-read -p "Enter option [1-3]: " OPTION
+read -p "Enter option [1-4]: " OPTION
 
 install_boot_fix() {
     echo ""
@@ -39,6 +40,7 @@ install_hdmi_fix() {
     cp udev/99-hdmi-dsi.rules /etc/udev/rules.d/
     systemctl daemon-reload
     udevadm control --reload-rules
+    udevadm trigger
     echo "HDMI fix installed and enabled."
 }
 
@@ -48,6 +50,21 @@ install_gdm_fix() {
     mkdir -p /etc/gdm3
     cp gdm/monitors.xml /etc/gdm3/
     echo "GDM configuration installed."
+}
+
+uninstall() {
+    echo ""
+    echo "Uninstalling..."
+    systemctl disable dsi-init.service 2>/dev/null || true
+    systemctl disable hdmi-dsi-fix.service 2>/dev/null || true
+    rm -f /etc/systemd/system/dsi-init.service
+    rm -f /etc/systemd/system/hdmi-dsi-fix.service
+    rm -f /etc/udev/rules.d/99-hdmi-dsi.rules
+    rm -f /usr/local/bin/hdmi-dsi-fix.sh
+    rm -f /etc/gdm3/monitors.xml
+    systemctl daemon-reload
+    udevadm control --reload-rules
+    echo "Uninstall complete. Please reboot."
 }
 
 case $OPTION in
@@ -64,12 +81,17 @@ case $OPTION in
         install_hdmi_fix
         install_gdm_fix
         ;;
+    4)
+        uninstall
+        ;;
     *)
         echo "Invalid option."
         exit 1
         ;;
 esac
 
+echo ""
+echo "Note: A reboot is required for all fixes to take effect."
 echo ""
 echo "================================================"
 echo " Installation complete!"

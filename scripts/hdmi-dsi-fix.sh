@@ -1,18 +1,14 @@
 #!/bin/bash
 
-STAMPFILE=/tmp/hdmi-dsi-last-run
-
-# If executed less than 15 seconds ago, ignore
-if [ -f "$STAMPFILE" ]; then
-    LAST=$(cat "$STAMPFILE")
-    NOW=$(date +%s)
-    DIFF=$((NOW - LAST))
-    if [ "$DIFF" -lt 15 ]; then
-        exit 0
-    fi
+# Ignore events during first 60 seconds of boot
+UPTIME=$(cut -d. -f1 /proc/uptime)
+if [ "$UPTIME" -lt 60 ]; then
+    exit 0
 fi
 
-date +%s > "$STAMPFILE"
+LOCKFILE=/tmp/hdmi-dsi-fix.lock
+exec 9>"$LOCKFILE"
+flock -n 9 || exit 0
 
 sleep 5
 
